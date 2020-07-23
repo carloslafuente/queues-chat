@@ -16,26 +16,31 @@ socket.on('connect', function () {
   console.log('Conectado al socket');
 
   socket.emit('getinChat', user, function (resp) {
-    console.log(resp);
+    // console.log(resp);
+    renderTitleRoom();
+    renderUsers(resp);
   });
 });
 
-socket.emit(
-  'message',
-  {
-    message: `Hola mundo`,
-  },
-  function (resp) {
-    console.log(resp);
-  }
-);
+// socket.emit(
+//   'message',
+//   {
+//     message: `Hola mundo`,
+//   },
+//   function (resp) {
+//     console.log(resp);
+//   }
+// );
 
 socket.on('message', function (data) {
-  console.log(data);
+  // console.log(data);
+  renderMessages(data, false);
+  scrollBottom();
 });
 
 socket.on('personsList', function (data) {
-  console.log(data);
+  // console.log(data);
+  renderUsers(data);
 });
 
 socket.on('privateMessage', function (message) {

@@ -19,12 +19,15 @@ io.on('connection', (client) => {
     client.broadcast
       .to(data.room)
       .emit('personsList', users.getPersonsRoom(data.room));
+    let message = utils.createMessage('Admin', `${data.name} join the chat`);
+    client.broadcast.to(data.room).emit('message', message);
   });
 
-  client.on('message', (data) => {
+  client.on('message', (data, callback) => {
     let person = users.getPerson(client.id);
     let message = utils.createMessage(person.name, data.message);
     client.broadcast.to(person.room).emit('message', message);
+    callback(message);
   });
 
   client.on('privateMessage', (data) => {
@@ -38,7 +41,7 @@ io.on('connection', (client) => {
     let deletedPerson = users.deletePerson(client.id);
     let message = utils.createMessage(
       'Admin',
-      `${deletedPerson.name} leaves the chat`
+      `${deletedPerson.name} left the chat`
     );
     client.broadcast.to(deletedPerson.room).emit('message', message);
     client.broadcast
