@@ -12,7 +12,6 @@ var user = {
   room: params.get('room'),
 };
 
-// on Escucha informacion que proviene del servidor
 socket.on('connect', function () {
   console.log('Conectado al socket');
 

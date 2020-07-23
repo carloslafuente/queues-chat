@@ -14,16 +14,17 @@ io.on('connection', (client) => {
       });
     }
     client.join(data.room);
-    let persons = users.addPerson(client.id, data.name, data.room);
-    callback(persons);
-    client.broadcast.emit('personsList', users.getPersons());
-    console.log(data);
+    users.addPerson(client.id, data.name, data.room);
+    callback(users.getPersonsRoom(data.room));
+    client.broadcast
+      .to(data.room)
+      .emit('personsList', users.getPersonsRoom(data.room));
   });
 
   client.on('message', (data) => {
     let person = users.getPerson(client.id);
     let message = utils.createMessage(person.name, data.message);
-    client.broadcast.emit('message', message);
+    client.broadcast.to(person.room).emit('message', message);
   });
 
   client.on('privateMessage', (data) => {
@@ -39,7 +40,9 @@ io.on('connection', (client) => {
       'Admin',
       `${deletedPerson.name} leaves the chat`
     );
-    client.broadcast.emit('message', message);
-    client.broadcast.emit('personsList', users.getPersons());
+    client.broadcast.to(deletedPerson.room).emit('message', message);
+    client.broadcast
+      .to(deletedPerson.room)
+      .emit('personsList', users.getPersonsRoom(deletedPerson.room));
   });
 });
